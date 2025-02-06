@@ -1,0 +1,157 @@
+{
+  "bot_name": "Post Genius",
+  "description": "Seu assistente de criação de conteúdo automatizado!",
+  "welcome_message": "Oi! Eu sou o **Post Genius**, seu assistente de conteúdo. Vou te ajudar a transformar ideias soltas em posts incríveis, adaptar conteúdos existentes para diferentes formatos e até sugerir legendas para suas fotos e vídeos! Vamos começar?",
+  "actions": [
+    {
+      "type": "button",
+      "label": "Criar um post do zero",
+      "next": "post_zero"
+    },
+    {
+      "type": "button",
+      "label": "Transformar um conteúdo já existente",
+      "next": "transformar_post"
+    },
+    {
+      "type": "button",
+      "label": "Analisar uma foto ou vídeo e sugerir um post",
+      "next": "analise_midia"
+    }
+  ],
+  "flows": [
+    {
+      "id": "post_zero",
+      "message": "Ótimo! Primeiro, me fala um pouco sobre o que você quer postar.",
+      "inputs": [
+        {
+          "type": "text",
+          "label": "Qual o tema principal do seu post?",
+          "variable": "tema_post"
+        },
+        {
+          "type": "select",
+          "label": "Você quer que seja um post mais:",
+          "options": ["Educativo", "Motivacional", "Entretenimento"],
+          "variable": "tipo_post"
+        },
+        {
+          "type": "select",
+          "label": "Você quer contar uma história pessoal ou apenas compartilhar um insight?",
+          "options": ["História pessoal", "Reflexão geral"],
+          "variable": "estilo_post"
+        },
+        {
+          "type": "text",
+          "label": "Se você pudesse resumir sua ideia em uma frase, qual seria?",
+          "variable": "frase_principal"
+        }
+      ],
+      "next": "gerar_post"
+    },
+    {
+      "id": "gerar_post",
+      "message": "Baseado nas suas respostas, estou gerando duas opções de post para você escolher.",
+      "ai_prompt": "Crie duas versões de post com base nestas informações: 
+        - Tema: {{tema_post}}
+        - Tipo: {{tipo_post}}
+        - Estilo: {{estilo_post}}
+        - Mensagem principal: {{frase_principal}}
+        O post deve incluir:
+        - Título chamativo
+        - Corpo do texto
+        - Sugestão de hashtags
+        - Melhor horário para postar",
+      "next": "escolher_post"
+    },
+    {
+      "id": "escolher_post",
+      "message": "Aqui estão duas opções de post. Qual delas você quer usar?",
+      "actions": [
+        {
+          "type": "button",
+          "label": "Opção 1",
+          "next": "salvar_post"
+        },
+        {
+          "type": "button",
+          "label": "Opção 2",
+          "next": "salvar_post"
+        }
+      ]
+    },
+    {
+      "id": "transformar_post",
+      "message": "Ótimo! Me manda o texto do post que você quer adaptar ou cole um link de referência.",
+      "inputs": [
+        {
+          "type": "text",
+          "label": "Cole aqui o texto ou link do post:",
+          "variable": "post_original"
+        },
+        {
+          "type": "select",
+          "label": "Quer transformar esse post em qual formato?",
+          "options": ["Reels/TikTok", "Carrossel Instagram", "Post LinkedIn", "Tweet/X", "Script para Podcast/YouTube"],
+          "variable": "formato_post"
+        }
+      ],
+      "ai_prompt": "Pegue este post: {{post_original}} e transforme em um conteúdo do tipo {{formato_post}}, garantindo um texto bem estruturado para esse formato.",
+      "next": "salvar_post"
+    },
+    {
+      "id": "analise_midia",
+      "message": "Envie uma imagem ou vídeo, e eu te ajudo a criar um post perfeito!",
+      "inputs": [
+        {
+          "type": "file",
+          "label": "Envie seu arquivo aqui:",
+          "variable": "arquivo_midia"
+        }
+      ],
+      "ai_prompt": "Baseado no arquivo {{arquivo_midia}}, gere três sugestões de legenda, hashtags recomendadas e dicas de edição para um post impactante.",
+      "next": "salvar_post"
+    },
+    {
+      "id": "salvar_post",
+      "message": "Onde você quer salvar esse post?",
+      "actions": [
+        {
+          "type": "button",
+          "label": "WhatsApp",
+          "next": "enviar_whatsapp"
+        },
+        {
+          "type": "button",
+          "label": "Google Drive",
+          "next": "enviar_drive"
+        },
+        {
+          "type": "button",
+          "label": "Salvar no Bloco de Notas",
+          "next": "enviar_notas"
+        }
+      ]
+    },
+    {
+      "id": "enviar_whatsapp",
+      "message": "Enviando o conteúdo para seu WhatsApp agora mesmo!",
+      "integration": {
+        "type": "whatsapp",
+        "content": "Seu post está pronto: {{ai_output}}"
+      }
+    },
+    {
+      "id": "enviar_drive",
+      "message": "Gerando um link no Google Drive...",
+      "integration": {
+        "type": "google_drive",
+        "content": "Seu post está pronto: {{ai_output}}"
+      }
+    },
+    {
+      "id": "enviar_notas",
+      "message": "Copie o texto abaixo e cole no seu Bloco de Notas:\n\n{{ai_output}}"
+    }
+  ]
+}
